@@ -29,6 +29,13 @@ from keras.layers.convolutional import Convolution1D
 from keras.utils import np_utils
 from keras import backend as k
 
+import my_callbacks
+
+epoch=500
+batch_siz=128
+
+
+
 
 def run_CNN(set, result_dir):
 
@@ -66,15 +73,18 @@ def run_CNN(set, result_dir):
 
     # build model
     model = Sequential()
-    model.add(Convolution1D(filters=64, kernel_size=7, strides=1, activation='relu', input_shape=(train_set_x[0].shape[0],
+    model.add(Convolution1D(filters=64, kernel_size=7, use_bias=True, strides=1, activation='relu', input_shape=(train_set_x[0].shape[0],
                             train_set_x[0].shape[1])))
     model.add(MaxPooling1D(pool_size=2))
-    # model.add(Dropout(0.2))
-    # model.add(
-    #     Convolution1D(filters=64, kernel_size=7, strides=1, activation='relu', input_shape=(train_set_x[0].shape[0],
-    #                                                                                         train_set_x[0].shape[1])))
-    # model.add(MaxPooling1D(pool_size=2))
-    model.add(Dropout(0.2))
+    model.add(
+        Convolution1D(filters=49, kernel_size=7, strides=1, use_bias=True,activation='relu', input_shape=(train_set_x[0].shape[0],
+                            train_set_x[0].shape[1])))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(
+        Convolution1D(filters=36, kernel_size=7, strides=1, use_bias=True, activation='relu', input_shape=(train_set_x[0].shape[0],
+                                   train_set_x[0].shape[1])))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Dropout(0.3))
 
     model.add(Flatten())
     model.add(Dense(1, activation='linear'))
@@ -85,8 +95,18 @@ def run_CNN(set, result_dir):
     adam = Adam(lr=0.0001)
     model.compile(loss='mse', optimizer=adam, metrics=['mean_squared_error'])
 
+    #loss change to mse+predict's value + last timepoint exceeding vluae
+
+    # prepare callback
+    # histories = my_callbacks.My_Callback()
+    #
+    # print(histories.losses)
+    # print(histories.aucs)
+
     # training
-    model.fit(train_set_x, train_set_y, nb_epoch=200, batch_size=32, validation_data=(validate_set_x, validate_set_y))
+
+
+    model.fit(train_set_x, train_set_y, nb_epoch=epoch, batch_size=batch_siz, validation_data=(validate_set_x, validate_set_y))
 
     # testing
     # on validation set
@@ -97,7 +117,7 @@ def run_CNN(set, result_dir):
     output_result(name='validation', signals={'prediction':predict_validation}, truth=validate_set_y,
                   sub_folder='validation', result_dir= result_dir)
 
-    #callback
+
 
     # on test set
     predict_test = model.predict(test_set_x)
@@ -106,8 +126,18 @@ def run_CNN(set, result_dir):
     output_result(name='test', signals={'prediction': predict_test}, truth=test_set_y,
                   sub_folder='test', result_dir=result_dir)
 
+    # score = model.evaluate(test_set_x, test_set_y, verbose=0)
+    # print('Test score:', score[0])
+    # print('Test accuracy:', score[1])
+
     # return
     return model
+
+
+
+
+
+
 
 def output_result(name, signals, truth, sub_folder, result_dir):
     # time_index : 1-D array

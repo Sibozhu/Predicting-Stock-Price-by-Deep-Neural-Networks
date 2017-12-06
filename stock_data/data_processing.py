@@ -19,13 +19,13 @@ def data_process(data_dir):
     :return: 2-d numpy array, shape=(time, stock)
              name_dic = ['name_of_the_stock', ...]
     '''
-    my_data = np.genfromtxt(data_dir, delimiter=',', filling_values=np.nan, usecols=range(1, 3022),skip_header=1)
-    # my_data = np.recfromcsv(data_dir, delimiter=',', filling_values=np.nan, usecols=range(1,3022), case_sensitive=True, deletechars='', replace_space='')
+    my_data = np.genfromtxt(data_dir, delimiter=',', filling_values=np.nan, usecols=range(1, 4429),skip_header=1)
+    # my_data = np.recfromcsv(data_dir, delimiter=',', filling_values=np.nan, usecols=range(1,4429), case_sensitive=True, deletechars='', replace_space='')
     data_index = np.recfromcsv(data_dir, delimiter=',', filling_values=np.nan, usecols=0, case_sensitive=True, deletechars='', replace_space='')
     # my_data = np.transpose(my_data)
-    # print np.shape(my_data)
+    print np.shape(my_data)
     # print my_data
-    # print np.shape(data_index)
+    print np.shape(data_index)
     # print data_index
 
     return (my_data,data_index)
@@ -35,9 +35,8 @@ def data_process(data_dir):
 
     # return (processed_data, name_dic)
 
-a,b= data_process("sp500top9_Jan2005toDec2016_alter.csv")
-print a
-print b
+a,b= data_process("sp500_daily_full_cleaned_alter.csv")
+
 
 
 def devide(signals, label, input_len, predict_day=1, train = [0,299], validation = [300, 349], test = [350, 399]):

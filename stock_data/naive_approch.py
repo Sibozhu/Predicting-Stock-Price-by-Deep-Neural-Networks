@@ -6,13 +6,24 @@ import os
 #####Settings###############
 
 #change the path every time
-result_dir = './results/sibo2/' # make sure it ends with /
+result_path = './results/'
+new_dir= 'sibo16/'
+#create a new directory to store new testing
+
+try:
+    os.makedirs(result_path + new_dir)
+except OSError:
+    if not os.path.isdir(result_path + new_dir):
+        raise
+
+
+result_dir = result_path+new_dir # make sure it ends with /
 try:
     os.makedirs(result_dir)
 except:
     pass
 
-processed_data, name_dic = data_process('sp500top9_Jan2005toDec2016_alter.csv')
+processed_data, name_dic = data_process('sp500_daily_full_cleaned_alter.csv')
 
 processed_data = processed_data[:,0:405]
 print('signals has length' + str(processed_data.shape[1]))
